@@ -83,7 +83,7 @@ namespace VirtualPets
                 int moodFactor = Hunger + Boredom;
 
                 if (moodFactor < 5) return "Extremely Happy";
-                else if (moodFactor < 10) return "Happy";
+                else if (moodFactor < 15) return "Happy";
                 else if (moodFactor < 25) return "Content";
                 else if (moodFactor < 50) return "Unhappy";
                 else if (moodFactor < 75) return "Mad";
