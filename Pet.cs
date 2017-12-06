@@ -79,10 +79,51 @@ namespace VirtualPets
                   ||        ||   
                   (_\       (_\"
         };
+        // I had to look up what noises some of these animals make. Some strings are simply [Animal Noises] becaues I can't really transcribe animal sounds
+        internal static readonly string[][] TalkingStrings = new string[][]
+        {
+            new string[]
+            {
+                "Meow",
+                "Purrr"
+            },
+            new string[]
+            {
+                "Woof",
+                "Hnngrrrr",
+                "A-Oouuh"
+            },
+            new string[]
+            {
+                "Weegh",
+                "[Mutter]",
+                "[Squeal]",
+                "[Rabbit Noises]"
+            },
+            new string[]
+            {
+                "Wah",
+                "[Turtle Noises]"
+            },
+            new string[]
+            {
+                "Sqwahh",
+                "Reeee",
+                "Huh-huh! There's the human!",
+                "Feed Me!",
+                "Play with me!"
+            },
+            new string[]
+            {
+                "Neiigh",
+                "Pffr",
+                "[Horse Noises]"
+            }
+        };
 
         // Timers are a built-in Class that execute specified functions after an interval
         // https://msdn.microsoft.com/en-us/library/system.timers.timer(v=vs.110).aspx
-        private static readonly Timer Tasks = new Timer();
+        private readonly Timer Tasks = new Timer();
         public static readonly int UpdateInterval = 7500;
         private static readonly Random RNG = new Random();
         
@@ -134,7 +175,7 @@ namespace VirtualPets
             }
         }
 
-        // This integer intends to ensure that it's unlikey that a Pet can die of Boredom
+        // This expression intends to ensure that it's unlikey that a Pet can die of Boredom
         public double Mood => (Hunger + (Boredom * 0.2));
 
         public string MoodString

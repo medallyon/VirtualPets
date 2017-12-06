@@ -212,6 +212,7 @@ namespace VirtualPets
              */
             Console.SetCursorPosition(0, 0);
             // This basically prints 100 lines of empty lines, which will be overwritten by new outputs to the Console
+            // 'Console.WindowWidth' on its own does not seem to erase any lines at all, hence the '- 1'
             for (int i = 0; i < 100; ++i) Console.WriteLine(new string(' ', Console.WindowWidth - 1));
             Console.SetCursorPosition(0, 0);
         }
@@ -275,12 +276,8 @@ namespace VirtualPets
             // https://msdn.microsoft.com/en-us/library/bb534803(v=vs.110).aspx
             Pet passedOutPet = Pets.Where((p) => p.Mood >= 100).ToArray()[0];
 
-            Console.Write($"It seems that your {passedOutPet.Type} {passedOutPet.Name} has passed out! The game is over. Do you want to restart? (y/n)\n > ");
-            if (Console.ReadLine().ToLower().StartsWith("y"))
-            {
-                ClearConsole();
-                Main(new String[0]);
-            }
+            Console.Write($"It seems that your {passedOutPet.Type} {passedOutPet.Name} has passed out! It lived for {passedOutPet.Born}\n\nThe game is over. Do you want to restart? (y/n)\n > ");
+            if (Console.ReadLine().ToLower().StartsWith("y")) Main(new String[0]);
             else Environment.Exit(0);
         }
     }
