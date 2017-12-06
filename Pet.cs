@@ -12,21 +12,90 @@ namespace VirtualPets
 
     class Pet
     {
-        // Instantiate variables that are needed throughout execution
+        public static readonly string[] asciiArt = new string[6]
+        {
+            @"            _,'|             _.-''``-...___..--';)
+                   /_ \'.      __..-' ,      ,--...--'''
+                  <\    .`--'''       `     /'
+                   `-';'               ;   ; ;
+             __...--''     ___...--_..'  .;.'
+            (,__....----'''       (,..--''",
+            @"                            __
+             ,                    ,´ e`--o
+            ((                   (  | __,'
+             \\~----------------' \_;/
+             (                      /
+             /) ._______________.  )
+            (( (               (( (
+             ``-'               ``-'",
+            @"               (`.         ,-,
+                       `\ `.    ,;' /
+                        \`. \ ,'/ .'
+                  __     `.\ Y /.'
+               .-'  ''--.._` ` (
+             .'            /   `
+            ,           ` '   Q '
+            ,         ,   `._    \
+            |         '     `-.;_'
+            `  ;    `  ` --,.._;
+            `    ,   )   .'
+             `._ ,  '   /_
+                ; ,''-,;' ``-
+                 ``-..__\``--`",
+            @"                                                    ,'
+                                                          ,;
+                                                        .'/
+                   `-_                                .'.'
+                     `;-_                           .' /
+                       `.-.        ,_.-'`'--'`'-._.` .'
+                         `.`-.    /    .'´'.   _.'  /
+                           `. '-.'_.._/0 _ 0\/`    {\
+                             `.      |'-^Y^- |     //
+                              (`\     \_.'._/\...-;..-.
+                              `._'._,'` ```    _.:---''`
+                                 ;-....----'''`
+                                /   (
+                           sk   |  (`
+                                `.^'",
+            @"                            .
+                                   | \/|
+           (\   _                  ) )|/|
+               (/            _----. /.'.'
+         .-._________..      .' @ _\  .'
+         '.._______.   '.   /    (_| .')
+           '._____.  /   '-/      | _.'
+            '.______ (         ) ) \
+              '..____ '._       )  )
+                 .' __.--\  , ,  // ((
+                 '.'  mrf|  \/   (_.'(
+                         '   \ .'
+                          \   (
+                           \   '.
+                            \ \ '.)
+                             '-'-'",
+            @".                       ;;
+                              ,;;'\ 
+                   __       ,;;' ' \
+                 /'  '\'~~'~' \ /'\.)
+              ,;(      )    /  | 
+             ,;' \    /-.,,(   )    
+                  ) /       ) /      
+                  ||        ||   
+                  (_\       (_\"
+        };
 
         // Timers are a built-in Class that execute specified functions after an interval
         // https://msdn.microsoft.com/en-us/library/system.timers.timer(v=vs.110).aspx
         private static readonly Timer Tasks = new Timer();
         public static readonly int UpdateInterval = 7500;
         private static readonly Random RNG = new Random();
-
-        // Declare a name
+        
         private string name;
         public string Name
         {
             get
             {
-                // This Class enabled me to convert strings to Title Case
+                // The 'CultureInfo' Class enables me to convert strings to Title Case
                 // https://msdn.microsoft.com/en-us/library/system.globalization.textinfo.totitlecase(v=vs.110).aspx
                 TextInfo textInfo = new CultureInfo("en-GB", false).TextInfo;
                 return textInfo.ToTitleCase(name);
@@ -37,12 +106,11 @@ namespace VirtualPets
             }
         }
 
-        // Declare a Pet Type
+        // The Pet Type declares the race of the animal, ultimately deciding how the animal acts
         public Type Type;
-
-        // Set the initial hunger level to 0
-        internal int hunger = 0;
-        // Declare a setter and getter for hunger
+        
+        private int hunger = 0;
+        // The getters/setters for Hunger & Boredom will be publicly available, unlike the private 'hunger' & 'boredom' properties
         public int Hunger
         {
             get
@@ -51,15 +119,12 @@ namespace VirtualPets
             }
             set
             {
-                // Check that hunger does not decrease below 0
                 hunger = value;
                 if (hunger < 0) hunger = 0;
             }
         }
-
-        // Set the initial boredom level to 0
-        internal int boredom = 0;
-        // Declare a setter and getter for boredom
+        
+        private int boredom = 0;
         public int Boredom
         {
             get
@@ -68,65 +133,27 @@ namespace VirtualPets
             }
             set
             {
-                // Check that boredom does not decrease below 0
                 boredom = value;
                 if (boredom < 0) boredom = 0;
             }
         }
 
-        // Declare a getter for the Mood
-        public string Mood
+        // This integer intends to ensure that it's unlikey that a Pet can die of Boredom
+        public double Mood => (Hunger + (Boredom * 0.2));
+
+        public string MoodString
         {
             get
             {
-                // Mood is based on Hunger + Boredom
-                int moodFactor = Hunger + Boredom;
-
-                if (moodFactor < 5) return "Extremely Happy";
-                else if (moodFactor < 15) return "Happy";
-                else if (moodFactor < 25) return "Content";
-                else if (moodFactor < 50) return "Unhappy";
-                else if (moodFactor < 75) return "Mad";
-                else if (moodFactor < 95) return "Raging Mad";
+                if (Mood < 5) return "Having the time of its life";
+                else if (Mood < 25) return "Happy";
+                else if (Mood < 50) return "Unhappy";
+                else if (Mood < 75) return "Mad";
+                else if (Mood < 95) return "Raging Mad";
                 else return "Passed Out";
             }
         }
-
-        // Define a method to initiate timers
-        private void InitTimers()
-        {
-            // Set the timer's interval to 'UpdateInterval'
-            Tasks.Interval = UpdateInterval;
-
-            // Declare which methods should be called every time the timer lapses
-            Tasks.Elapsed += new ElapsedEventHandler(IncreaseHunger);
-            Tasks.Elapsed += new ElapsedEventHandler(IncreaseBoredom);
-            Tasks.Elapsed += new ElapsedEventHandler(CheckDeathStatus);
-
-            // Enable the timer
-            Tasks.Enabled = true;
-        }
-
-        private void CheckDeathStatus(object source, ElapsedEventArgs e)
-        {
-            if (Mood == "Passed Out")
-            {
-                Program.CurrentlyInMenu = false;
-                Program.GameOver = true;
-                Tasks.Enabled = false;
-
-                Program.ClearConsole();
-                Console.Write($"It seems that your {Type} {Name} has passed out! The game is over. Do you want to restart? (y/n)\n > ");
-                if (Console.ReadLine().ToLower().StartsWith("y"))
-                {
-                    Program.ClearConsole();
-                    Program.Main(new String[0]);
-                }
-                else Environment.Exit(0);
-            }
-        }
-
-        // Declare the default constructor
+        
         public Pet(string name, int type)
         {
             Name = name;
@@ -134,11 +161,10 @@ namespace VirtualPets
 
             InitTimers();
         }
-        
-        // Declare an overload constructor with initial values for hunger and boredom
+
+        // An overload constructor with initial values for hunger and boredom
         public Pet(string name, int type, int h, int b)
         {
-            // Set the appropriate properties
             Name = name;
             Type = (Type)type;
 
@@ -148,10 +174,35 @@ namespace VirtualPets
             InitTimers();
         }
 
+        // This initiates timers to keep track of hunger & boredom values and makes sure the Pet expires
+        private void InitTimers()
+        {
+            Tasks.Interval = UpdateInterval;
+
+            // Declare which methods should be called every time the timer lapses
+            Tasks.Elapsed += new ElapsedEventHandler(IncreaseHunger);
+            Tasks.Elapsed += new ElapsedEventHandler(IncreaseBoredom);
+            Tasks.Elapsed += new ElapsedEventHandler(CheckDeathStatus);
+            
+            Tasks.Enabled = true;
+        }
+
+        // This method checks that the program takes the appropriate actions when the Pet expires
+        private void CheckDeathStatus(object source, ElapsedEventArgs e)
+        {
+            // The Pet is officially 'passed out' beyond 100 "Mood" points
+            if (Mood >= 100)
+            {
+                Program.CurrentlyInMenu = false;
+                Program.GameOver = true;
+                Tasks.Enabled = false;
+            }
+        }
+
         // Nicely formatted string that displays necessary data about this pet
         public string GetStatusWindow()
         {
-            return $"Name: {Name}\nType: {Type}\nHunger: {Hunger}\nBoredom: {Boredom}\nMood: {Mood}";
+            return $"Name: {Name}\nType: {Type}\nHunger: {Hunger}\nBoredom: {Boredom}\nMood: {MoodString}";
         }
 
         // The method to talk
@@ -184,7 +235,7 @@ namespace VirtualPets
         // A method that is called every x seconds that increases the pet's hunger level
         internal void IncreaseHunger(object source, ElapsedEventArgs e)
         {
-            Hunger += RNG.Next(5);
+            Hunger += RNG.Next(2, 8);
         }
 
         // Default method for feeding the pet with a default feeding level
@@ -215,7 +266,7 @@ namespace VirtualPets
         // A method that is called every x seconds that increases the pet's boredom level
         internal void IncreaseBoredom(object source, ElapsedEventArgs e)
         {
-            Boredom += RNG.Next(5);
+            Boredom += RNG.Next(2, 8);
         }
 
         // Default method for decreasing the pet's boredom level with a default value
