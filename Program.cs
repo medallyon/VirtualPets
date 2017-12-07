@@ -295,7 +295,7 @@ namespace VirtualPets
 
                 exitCount--;
                 Console.Write("\x000DExiting in " + exitCount);
-                if (exitCount == 0) Environment.Exit(0);
+                if (exitCount == 0) ExitProgram();
             });
 
             exitTimer.Enabled = true;

@@ -252,27 +252,8 @@ namespace VirtualPets
         // Outputs a string based on the type of pet
         public void Talk()
         {
-            switch (Type)
-            {
-                case (Type)0:
-                    Console.WriteLine("Meow");
-                    break;
-                case (Type)1:
-                    Console.WriteLine("Woof");
-                    break;
-                case (Type)2:
-                    Console.WriteLine("[Rabbit Noises]");
-                    break;
-                case (Type)3:
-                    Console.WriteLine("[Turtle Noises]");
-                    break;
-                case (Type)4:
-                    Console.WriteLine("Ca-caw! You're funny!");
-                    break;
-                case (Type)5:
-                    Console.WriteLine("Weugh");
-                    break;
-            }
+            string[] availableStrings = TalkingStrings[(int)Type];
+            Console.WriteLine(availableStrings[RNG.Next(availableStrings.Length)]);
         }
 
         // A method that is called every x seconds that increases the pet's hunger level
