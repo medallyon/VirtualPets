@@ -247,19 +247,19 @@ namespace VirtualPets
             return input;
         }
 
-        public static StringBuilder CalculateTimeSpan(DateTime Start, DateTime End)
+        public static string CalculateTimeSpan(DateTime Start, DateTime End)
         {
             // Subtract the time of birth with the time of death to get the TimeSpan of life for this Pet
             TimeSpan Length = Start.Subtract(End);
 
             // The following chunk is just appending the appropriate units of time
             // Say, the pet lived for 5 minutes, it shouldn't display '0 Hours and 5 Minutes', but only '5 Minutes'
-            StringBuilder LengthString = new StringBuilder();
-            if (Length.TotalHours >= 1) LengthString.Append($"{Math.Ceiling(Length.TotalHours)} Hour{(Length.TotalHours == 1 ? "" : "s")} ");
-            if (Length.TotalMinutes >= 1 && Length.TotalHours > 0) LengthString.Append($"{Length.Minutes} Minute{(Length.Minutes == 1 ? "" : "s")} ");
-            else if (Length.TotalMinutes >= 1) LengthString.Append($"{Math.Ceiling(Length.TotalMinutes)} Minute{(Length.TotalMinutes == 1 ? "" : "s")}");
-            if (Length.TotalSeconds >= 1 && Length.TotalMinutes > 0) LengthString.Append($"and {Length.Seconds} Second{(Length.Seconds == 1 ? "" : "s")}");
-            else if (Length.TotalSeconds >= 1) LengthString.Append($"and {Math.Ceiling(Length.TotalSeconds)} Second{(Length.TotalSeconds == 1 ? "" : "s")}");
+            string LengthString = string.Empty;
+            if (Length.TotalHours >= 1) LengthString += $"{Math.Ceiling(Length.TotalHours)} Hour{(Length.TotalHours == 1 ? "" : "s")} ";
+            if (Length.TotalMinutes >= 1 && Length.TotalHours > 0) LengthString += $"{Length.Minutes} Minute{(Length.Minutes == 1 ? "" : "s")} ";
+            else if (Length.TotalMinutes >= 1) LengthString += $"{Math.Ceiling(Length.TotalMinutes)} Minute{(Length.TotalMinutes == 1 ? "" : "s")}";
+            if (Length.TotalSeconds >= 1 && Length.TotalMinutes > 0) LengthString += $"and {Length.Seconds} Second{(Length.Seconds == 1 ? "" : "s")}";
+            else if (Length.TotalSeconds >= 1) LengthString += $"and {Math.Ceiling(Length.TotalSeconds)} Second{(Length.TotalSeconds == 1 ? "" : "s")}";
 
             return LengthString;
         }
@@ -272,15 +272,18 @@ namespace VirtualPets
             // https://msdn.microsoft.com/en-us/library/bb534803(v=vs.110).aspx
             Pet passedOutPet = Pets.Where((p) => p.Mood >= 100).ToArray()[0];
 
-            StringBuilder LifeSpan = CalculateTimeSpan(passedOutPet.Born, passedOutPet.Died);
+            string LifeSpan = CalculateTimeSpan(passedOutPet.Died, passedOutPet.Born);
 
-            Console.Write($"It seems that your {passedOutPet.Type} {passedOutPet.Name} has passed out! It lived for {LifeSpan.ToString()}.\n\nThe game is over. Do you want to restart? (y/n)\n > ");
+            Console.Write($"It seems that your {passedOutPet.Type} {passedOutPet.Name} has passed out! It lived for a total of {LifeSpan}.\n\nThe game is over. Do you want to restart? (y/n)\n > ");
             if (Console.ReadLine().ToLower().StartsWith("y")) Main(new String[0]);
-            else Environment.Exit(0);
+            else ExitProgram();
         }
 
         public static void ExitProgram()
         {
+            ClearConsole();
+            Console.WriteLine("Thanks for playing!");
+
             // Initiate the timer for exiting the process
             int exitCount = 4;
 
@@ -295,7 +298,7 @@ namespace VirtualPets
 
                 exitCount--;
                 Console.Write("\x000DExiting in " + exitCount);
-                if (exitCount == 0) ExitProgram();
+                if (exitCount == 0) Environment.Exit(0);
             });
 
             exitTimer.Enabled = true;
