@@ -56,6 +56,7 @@ namespace VirtualPets
                 Console.Write($"\nYou chose a {(Type)petChoice} to be your {((i == 0) ? "first" : "second")} pet. What are you going to name it?\n > ");
 
                 // Collect Pet Name and validate it only contains non-numeric characters and does not just consist of spaces
+                // https://stackoverflow.com/a/1181426
                 string petName = Console.ReadLine();
                 while (!Regex.IsMatch(petName, @"^[a-zA-Z ]+$") || petName.Length == 0 || petName.All((c) => c == ' '))
                 {
