@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Timers;
-using System.Threading.Tasks;
 using System.Globalization;
 
 namespace VirtualPets
@@ -55,7 +51,7 @@ namespace VirtualPets
                               `._'._,'` ```    _.:---''`
                                  ;-....----'''`
                                 /   (
-                           sk   |  (`
+                                |  (`
                                 `.^'",
             @"        ______ __
        {-_-_= '. `'.
@@ -68,7 +64,7 @@ namespace VirtualPets
             {=_       ;=~`    `*`
              `//__,-=~`
              <<__ \\__
-       jgs   /`)))/`)))",
+             /`)))/`)))",
             @"                                ;;
                               ,;;'\ 
                    __       ,;;' ' \
@@ -79,13 +75,15 @@ namespace VirtualPets
                   ||        ||   
                   (_\       (_\"
         };
-        // I had to look up what noises some of these animals make. Some strings are simply [Animal Noises] becaues I can't really transcribe animal sounds
+        // I had to look up what noises some of these animals make
+        // Some strings are simply [Animal Noises] because I can't really transcribe animal sounds
         internal static readonly string[][] TalkingStrings = new string[][]
         {
             new string[]
             {
                 "Meow",
-                "Purrr"
+                "Purrr",
+                "[Snarl]"
             },
             new string[]
             {
@@ -109,9 +107,9 @@ namespace VirtualPets
             {
                 "Sqwahh",
                 "Reeee",
-                "Huh-huh! There's the human!",
-                "Feed Me!",
-                "Play with me!"
+                "Hello!",
+                "Wahh! Wahh! You look funny!",
+                "Hey! Human! When are you going to feed me? Sqwahh!"
             },
             new string[]
             {
@@ -253,7 +251,14 @@ namespace VirtualPets
         public void Talk()
         {
             string[] availableStrings = TalkingStrings[(int)Type];
-            Console.WriteLine(availableStrings[RNG.Next(availableStrings.Length)]);
+            string finalOutput = availableStrings[RNG.Next(availableStrings.Length)];
+
+            // Write something depending on if the pet is hungry or bored
+            if (Hunger > 25 && Boredom > 25) finalOutput += ". I'm hungry and bored. Feed me!";
+            else if (Hunger > 25) finalOutput += ". I'm hungry. Feed me!";
+            else if (Boredom > 25) finalOutput += ". I'm bored. Play with me!";
+
+            Console.WriteLine(finalOutput);
         }
 
         // A method that is called every x seconds that increases the pet's hunger level

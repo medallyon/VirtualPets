@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Timers;
 using System.Threading;
 
@@ -44,12 +42,13 @@ namespace VirtualPets
                 PetTypesString += "\n\n > ";
 
                 // This custom function collects the player's answer
-                // See the function declaration for an elaborate explanation
+                // See the function declaration at line 225 for an elaborate explanation
                 int petChoice = CollectMenuAnswer(PetTypesString, 1, PetChoices.Length, () =>
                 {
                     // If the answer is incorrect, clear the board until a valid answer is given
                     ClearConsole();
                     
+                    // The reason a 0 is returned here is explained in the function declaration
                     return 0;
                 });
                 
@@ -92,7 +91,7 @@ namespace VirtualPets
                 // i.e. if 'CurrentPet' == 0, then 'otherPet' will be -1 * -1, which is 1
                 // i.e. if 'CurrentPet' == 1, then 'otherPet' will be 0 * -1, which is 0
                 Pet otherPet = Pets[(CurrentPet - 1) * (-1)];
-                if (otherPet.Hunger > 20) Console.WriteLine($"\n > Don't forget to feed {otherPet.Name} as well!");
+                if (otherPet.Mood > 25) Console.WriteLine($"\n > Don't forget to tend to {otherPet.Name} as well!");
 
                 // Collect the Player's input for their next action
                 int menuChoice = CollectMenuAnswer("\nWhat are you going to do next? Choose from the following:\n\n  1. Feed\n  2. Play\n  3. Speak with pet\n  4. Choose Pet\n  5. Exit\n\n > ", 1, 5, () =>
@@ -105,7 +104,7 @@ namespace VirtualPets
                 // The Console Window should not be refreshed from now on
                 CurrentlyInMenu = false;
 
-                // This var is used to break out of the infinite 'While' loop if the Player wants to exit the game.
+                // This Boolean is used to break out of the infinite 'While' loop if the Player wants to exit the game.
                 bool endGame = false;
                 
                 switch (menuChoice)
@@ -152,7 +151,8 @@ namespace VirtualPets
                             
                     // If the Player selected 'Switch Pets'
                     case 3:
-                        string petSelectString = $"\nSelect a pet to pet:\n\n";
+                        // List all existing pets
+                        string petSelectString = $"\nSelect a pet to pet:\n";
                         for (int i = 0; i < Pets.Length; i++) petSelectString += $"  {i + 1}. {Pets[i].Name}\n";
                         petSelectString += " > ";
 
@@ -210,7 +210,7 @@ namespace VirtualPets
                 // i.e. if 'CurrentPet' == 0, then 'otherPet' will be -1 * -1, which is 1
                 // i.e. if 'CurrentPet' == 1, then 'otherPet' will be 0 * -1, which is 0
                 Pet otherPet = Pets[(CurrentPet - 1) * (-1)];
-                // If the other pet's Hunger + Boredom is more than 20, tell the Player
+
                 if (otherPet.Mood > 25) Console.WriteLine($"\n > Don't forget to tend to {otherPet.Name} as well!");
 
                 // Repeat the Menu selection string since the original string was overwritten
@@ -233,7 +233,7 @@ namespace VirtualPets
             while (!inputValid || (input < minInput || input > maxInput))
             {
                 // Call the Delegate function
-                // I'm not sure why, but this delegate function requires that a Type is returned.
+                // I'm not sure why, but this delegate function requires that a Type is returned
                 // This is why one will notice that every time this function is called, a 'return 0' is included as a work-around
                 WrongAnswerFunction();
                 
@@ -247,6 +247,7 @@ namespace VirtualPets
             return input;
         }
 
+        // This util function calculates the amount of time that has passed from one DateTime instance to another
         public static string CalculateTimeSpan(DateTime Start, DateTime End)
         {
             // Subtract the time of birth with the time of death to get the TimeSpan of life for this Pet
@@ -264,6 +265,7 @@ namespace VirtualPets
             return LengthString;
         }
 
+        // This util funciton ends or restarts the game appropriately
         public static void EndGame()
         {
             ClearConsole();
@@ -279,6 +281,7 @@ namespace VirtualPets
             else ExitProgram();
         }
 
+        // This util function exits the program appropriately
         public static void ExitProgram()
         {
             ClearConsole();
