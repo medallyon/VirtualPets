@@ -126,6 +126,9 @@ namespace VirtualPets
         private readonly Timer Tasks = new Timer();
         public static readonly int UpdateInterval = 7500;
         private static readonly Random RNG = new Random();
+
+        public DateTime Born = DateTime.UtcNow;
+        public DateTime Died;
         
         private string name;
         public string Name
@@ -232,6 +235,9 @@ namespace VirtualPets
             {
                 Program.CurrentlyInMenu = false;
                 Program.GameOver = true;
+
+                Died = DateTime.Now;
+
                 Tasks.Enabled = false;
             }
         }

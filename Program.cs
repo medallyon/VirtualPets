@@ -98,7 +98,7 @@ namespace VirtualPets
                 int menuChoice = CollectMenuAnswer("\nWhat are you going to do next? Choose from the following:\n\n  1. Feed\n  2. Play\n  3. Speak with pet\n  4. Choose Pet\n  5. Exit\n\n > ", 1, 5, () =>
                 {
                     ClearConsole();
-                    Console.WriteLine(Pets[CurrentPet].GetStatusWindow());
+                    Console.WriteLine(Pet.asciiArt[(int)Pets[CurrentPet].Type] + "\n\n" + Pets[CurrentPet].GetStatusWindow());
                     return 0;
                 });
 
@@ -178,28 +178,7 @@ namespace VirtualPets
             }
 
             Console.WriteLine("\nThanks for playing!");
-
-            // Initiate the timer for exiting the process
-            int exitCount = 4;
-            
-            System.Timers.Timer exitTimer = new System.Timers.Timer();
-            exitTimer.Interval = 1000;
-
-            // The following code includes a lambda expression, (used multiple times throughout):
-            // https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/lambda-expressions
-            exitTimer.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs e) =>
-            {
-                // This function will be executed every time the Timer lapses (1 second)
-                
-                exitCount--;
-                Console.Write("\x000DExiting in " + exitCount);
-                if (exitCount == 0) Environment.Exit(0);
-            });
-
-            exitTimer.Enabled = true;
-
-            // Keep the process alive
-            while (true) Thread.Sleep(6000);
+            ExitProgram();
         }
 
         // Create a util function that completely clears the console
@@ -268,6 +247,23 @@ namespace VirtualPets
             return input;
         }
 
+        public static StringBuilder CalculateTimeSpan(DateTime Start, DateTime End)
+        {
+            // Subtract the time of birth with the time of death to get the TimeSpan of life for this Pet
+            TimeSpan Length = Start.Subtract(End);
+
+            // The following chunk is just appending the appropriate units of time
+            // Say, the pet lived for 5 minutes, it shouldn't display '0 Hours and 5 Minutes', but only '5 Minutes'
+            StringBuilder LengthString = new StringBuilder();
+            if (Length.TotalHours >= 1) LengthString.Append($"{Math.Ceiling(Length.TotalHours)} Hour{(Length.TotalHours == 1 ? "" : "s")} ");
+            if (Length.TotalMinutes >= 1 && Length.TotalHours > 0) LengthString.Append($"{Length.Minutes} Minute{(Length.Minutes == 1 ? "" : "s")} ");
+            else if (Length.TotalMinutes >= 1) LengthString.Append($"{Math.Ceiling(Length.TotalMinutes)} Minute{(Length.TotalMinutes == 1 ? "" : "s")}");
+            if (Length.TotalSeconds >= 1 && Length.TotalMinutes > 0) LengthString.Append($"and {Length.Seconds} Second{(Length.Seconds == 1 ? "" : "s")}");
+            else if (Length.TotalSeconds >= 1) LengthString.Append($"and {Math.Ceiling(Length.TotalSeconds)} Second{(Length.TotalSeconds == 1 ? "" : "s")}");
+
+            return LengthString;
+        }
+
         public static void EndGame()
         {
             ClearConsole();
@@ -276,9 +272,36 @@ namespace VirtualPets
             // https://msdn.microsoft.com/en-us/library/bb534803(v=vs.110).aspx
             Pet passedOutPet = Pets.Where((p) => p.Mood >= 100).ToArray()[0];
 
-            Console.Write($"It seems that your {passedOutPet.Type} {passedOutPet.Name} has passed out! It lived for {passedOutPet.Born}\n\nThe game is over. Do you want to restart? (y/n)\n > ");
+            StringBuilder LifeSpan = CalculateTimeSpan(passedOutPet.Born, passedOutPet.Died);
+
+            Console.Write($"It seems that your {passedOutPet.Type} {passedOutPet.Name} has passed out! It lived for {LifeSpan.ToString()}.\n\nThe game is over. Do you want to restart? (y/n)\n > ");
             if (Console.ReadLine().ToLower().StartsWith("y")) Main(new String[0]);
             else Environment.Exit(0);
+        }
+
+        public static void ExitProgram()
+        {
+            // Initiate the timer for exiting the process
+            int exitCount = 4;
+
+            System.Timers.Timer exitTimer = new System.Timers.Timer();
+            exitTimer.Interval = 1000;
+
+            // The following code includes a lambda expression, (used multiple times throughout):
+            // https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/lambda-expressions
+            exitTimer.Elapsed += new ElapsedEventHandler((object source, ElapsedEventArgs e) =>
+            {
+                // This function will be executed every time the Timer lapses (1 second)
+
+                exitCount--;
+                Console.Write("\x000DExiting in " + exitCount);
+                if (exitCount == 0) Environment.Exit(0);
+            });
+
+            exitTimer.Enabled = true;
+
+            // Keep the process alive
+            while (true) Thread.Sleep(6000);
         }
     }
 }
