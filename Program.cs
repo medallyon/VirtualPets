@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Timers;
 using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace VirtualPets
 {
@@ -54,8 +55,17 @@ namespace VirtualPets
                 
                 Console.Write($"\nYou chose a {(Type)petChoice} to be your {((i == 0) ? "first" : "second")} pet. What are you going to name it?\n > ");
 
+                // Collect Pet Name and validate it only contains non-numeric characters and does not just consist of spaces
+                string petName = Console.ReadLine();
+                while (!Regex.IsMatch(petName, @"^[a-zA-Z ]+$") || petName.Length == 0 || petName.All((c) => c == ' '))
+                {
+                    ClearConsole();
+                    Console.Write($"Sorry, You cannot call your {(Type)petChoice} \"{petName}\". You should only use alphabetic characters.\n > ");
+                    petName = Console.ReadLine();
+                }
+
                 // Instantiate a new pet and add it to the static 'Pets' Array
-                Pets[i] = new Pet(Console.ReadLine(), petChoice);
+                Pets[i] = new Pet(petName, petChoice);
                 
                 ClearConsole();
             }
